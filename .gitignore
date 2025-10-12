@@ -10,3 +10,6 @@ wheels/
 .venv
 
 *.db
+retrosheet/postseason/
+retrosheet/regular_season/
+retrosheet/*.csv
