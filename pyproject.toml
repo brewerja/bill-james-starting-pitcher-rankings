@@ -1,0 +1,18 @@
+[project]
+name = "bill-james"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "mlb-statsapi>=1.9.0",
+    "requests>=2.32.5",
+    "sqlmodel>=0.0.27",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.0",
+    "ty>=0.0.1a21",
+]
