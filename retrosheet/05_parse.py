@@ -126,7 +126,6 @@ def parse_for_starting_pitcher_outings(xml_file):
                                         people_lookup[pitcher.attrib["id"]]["key_mlbam"]
                                     ),
                                 ),
-                                game_score=50,  # TODO
                                 outs=int(p["outs"]),
                                 ab=int(p["ab"]),
                                 batters_faced=int(p["bf"]),

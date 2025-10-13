@@ -15,7 +15,7 @@ COLUMNS = ["key_mlbam", "key_retro", "name_last", "name_first"]
 input_files = sorted(glob.glob(os.path.join(INPUT_DIR, "people-[0-9a-z].csv")))
 
 with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as out_csv:
-    writer = csv.DictWriter(out_csv, fieldnames=columns)
+    writer = csv.DictWriter(out_csv, fieldnames=COLUMNS)
     writer.writeheader()
 
     for file in input_files:
@@ -35,4 +35,4 @@ with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as out_csv:
                     }
                 )
 
-print(f"✅ Combined file written to: {output_file}")
+print(f"✅ Combined file written to: {OUTPUT_FILE}")
