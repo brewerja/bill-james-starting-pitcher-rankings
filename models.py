@@ -32,21 +32,55 @@ class Pitcher(SQLModel, table=True):
     id: int = Field(primary_key=True)
     name: str = Field(unique=True)
 
-    game_scores: list["GameScore"] = Relationship(back_populates="pitcher")
+    pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="pitcher")
     ratings: list["Rating"] = Relationship(back_populates="pitcher")
 
 
-class GameScore(SQLModel, table=True):
-    __tablename__ = "game_scores"
+class PitcherOuting(SQLModel, table=True):
+    __tablename__ = "pitcher_outings"
 
     game_id: int | None = Field(foreign_key="games.id", primary_key=True, default=None)
     pitcher_id: int | None = Field(
         foreign_key="pitchers.id", primary_key=True, default=None
     )
-    game_score: float
+    outs: int
+    ab: int
+    batters_faced: int
+    hits: int
+    runs: int
+    earned_runs: int
+    home_runs: int
+    walks: int
+    intentional_walks: int
+    strikeouts: int
+    wild_pitches: int
+    balks: int
+    hit_batters: int
+    ground_balls: int
+    fly_balls: int
+    pitches: int
+    strikes: int
 
-    game: "Game" = Relationship(back_populates="game_scores")
-    pitcher: "Pitcher" = Relationship(back_populates="game_scores")
+    game_score: float | None = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.game_score = self.calculate_game_score()
+
+    def calculate_game_score(self) -> float:
+        return (
+            50
+            + self.outs
+            + max(0, 2 * 12 - self.outs)
+            + self.strikeouts
+            - 2 * self.hits
+            - 4 * self.earned_runs
+            - 2 * (self.runs - self.earned_runs)
+            - self.walks
+        )
+
+    game: "Game" = Relationship(back_populates="pitcher_outings")
+    pitcher: "Pitcher" = Relationship(back_populates="pitcher_outings")
 
 
 class Game(SQLModel, table=True):
@@ -58,7 +92,7 @@ class Game(SQLModel, table=True):
     runs: int
 
     venue: "Venue" = Relationship(back_populates="games")
-    game_scores: list["GameScore"] = Relationship(back_populates="game")
+    pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="game")
 
 
 class Rating(SQLModel, table=True):

@@ -10,6 +10,8 @@ wheels/
 .venv
 
 *.db
+retrosheet/ballparks/
 retrosheet/postseason/
 retrosheet/regular_season/
 retrosheet/*.csv
+retrosheet/models.py

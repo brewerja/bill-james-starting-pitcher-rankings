@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Download ballparks
+mkdir -p ballparks/archives
+cd ballparks
+wget https://www.retrosheet.org/ballparks.zip
+unzip ballparks.zip
+mv *.zip archives
+cd ..
+
 # Download all years from 1960-2024 by decades
 mkdir -p regular_season/archives
 cd regular_season
