@@ -12,7 +12,6 @@ cd ..
 # Download event files for all years from 1960-2024 by decades
 mkdir -p regular_season/archives
 cd regular_season
-wget https://www.retrosheet.org/events/1960seve.zip
 wget https://www.retrosheet.org/events/1970seve.zip
 wget https://www.retrosheet.org/events/1980seve.zip
 wget https://www.retrosheet.org/events/1990seve.zip

@@ -53,9 +53,12 @@ def persist_venues() -> None:
 def persist_pitchers_games_outings(xml_file: str) -> None:
     with open(xml_file) as f:
         doc = lxml.etree.fromstringlist(itertools.chain("<games>", f, "</games>"))
-        pitchers, games, pitcher_outings = {}, [], []
+        pitchers, games, outings = {}, [], []
 
         for boxscore in doc.findall("boxscore"):
+            # Skip an all star game that's mixed in
+            if boxscore.get("game_id") == "ASE196108200":
+                continue
             date_str = boxscore.get("date").replace("/", "-")
             linescore = boxscore.find("linescore")
             games.append(
@@ -83,7 +86,7 @@ def persist_pitchers_games_outings(xml_file: str) -> None:
                         mlbam_id=people_lookup[pitcher_id]["key_mlbam"],
                         name=f"{p['fname']} {p['lname']}",
                     )
-                pitcher_outings.append(
+                outings.append(
                     PitcherOuting(
                         game_id=boxscore.get("game_id"),
                         pitcher_id=pitcher_id,
@@ -108,12 +111,12 @@ def persist_pitchers_games_outings(xml_file: str) -> None:
                 )
 
     with Session(engine) as session:
-        session.execute(
+        session.exec(
             insert(Pitcher)
             .values([p.model_dump() for p in pitchers.values()])
             .on_conflict_do_nothing(index_elements=["id"])
         )
-        session.add_all(games + pitcher_outings)
+        session.add_all(games + outings)
         session.commit()
 
 
@@ -126,7 +129,7 @@ def get_boxscore_xml_files(base_dirs: list[str]) -> list[str]:
                 match = pattern.search(file)
                 if match:
                     year = int(match.group(1))
-                    if year >= 2023:
+                    if year >= 1960:
                         xml_files.append(os.path.join(root, file))
     return xml_files
 
