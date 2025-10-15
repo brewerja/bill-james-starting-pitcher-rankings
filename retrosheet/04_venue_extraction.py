@@ -1,5 +1,6 @@
-import requests
 import csv
+
+import requests
 
 URL = "https://statsapi.mlb.com/api/v1/venues?hydrate=xrefId"
 

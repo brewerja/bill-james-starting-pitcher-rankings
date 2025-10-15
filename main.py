@@ -1,6 +1,5 @@
-from typing import cast
-from datetime import datetime, date
-from typing import TypedDict
+from datetime import date, datetime
+from typing import TypedDict, cast
 
 import statsapi
 

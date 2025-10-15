@@ -1,6 +1,7 @@
+from urllib.parse import urlencode
+
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlencode
 
 
 def get_pitcher_ratings(month: int, day: int, year: int) -> list[dict[str, str]]:

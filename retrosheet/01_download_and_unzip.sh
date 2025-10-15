@@ -4,11 +4,12 @@
 mkdir -p ballparks/archives
 cd ballparks
 wget https://www.retrosheet.org/ballparks.zip
+wget https://www.retrosheet.org/parkcode.txt
 unzip ballparks.zip
 mv *.zip archives
 cd ..
 
-# Download all years from 1960-2024 by decades
+# Download event files for all years from 1960-2024 by decades
 mkdir -p regular_season/archives
 cd regular_season
 wget https://www.retrosheet.org/events/1960seve.zip

@@ -14,3 +14,28 @@ Need to use Retrosheet game ids for historical games, new games could use MLBAM 
 It might make sense to convert the MLBAM ids to Retrosheet ids in the offseason once Retrosheet releases a season.
 
 For some reason the ballparks endpoint on MLBAM doesn't include the retrosheet ids for a few ballparks.
+
+```
+```
+```
+```
+SELECT
+  po.game_id,
+  g.date,
+  p.name,
+  po.game_score
+FROM pitcher_outings AS po
+INNER JOIN games AS g
+  ON po.game_id = g.id
+INNER JOIN pitchers AS p
+  ON po.pitcher_id = p.id
+ORDER BY po.game_score DESC
+LIMIT 100;
+
+
+Ballparks endpoint from MLBAM has some retrosheet IDs, but not all.
+Need to look for a match.
+```
+```
+```
+```

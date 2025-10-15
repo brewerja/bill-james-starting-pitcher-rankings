@@ -1,12 +1,14 @@
 from datetime import date as date_type
-from sqlmodel import SQLModel, Field, Relationship
+
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class Venue(SQLModel, table=True):
     __tablename__ = "venues"
 
-    id: int = Field(primary_key=True)
-    name: str = Field(unique=True)
+    id: str = Field(primary_key=True)
+    mlbam_id: int = Field(unique=True)
+    name: str
 
     games: list["Game"] = Relationship(back_populates="venue")
     expected_game_scores: list["ExpectedGameScore"] = Relationship(
@@ -14,23 +16,12 @@ class Venue(SQLModel, table=True):
     )
 
 
-class ExpectedGameScore(SQLModel, table=True):
-    __tablename__ = "expected_game_scores"
-
-    venue_id: int | None = Field(
-        foreign_key="venues.id", primary_key=True, default=None
-    )
-    date: date_type = Field(primary_key=True)
-    expected_game_score: float
-
-    venue: "Venue" = Relationship(back_populates="expected_game_scores")
-
-
 class Pitcher(SQLModel, table=True):
     __tablename__ = "pitchers"
 
-    id: int = Field(primary_key=True)
-    name: str = Field(unique=True)
+    id: str = Field(primary_key=True)
+    mlbam_id: int = Field(unique=True)
+    name: str
 
     pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="pitcher")
     ratings: list["Rating"] = Relationship(back_populates="pitcher")
@@ -39,10 +30,8 @@ class Pitcher(SQLModel, table=True):
 class PitcherOuting(SQLModel, table=True):
     __tablename__ = "pitcher_outings"
 
-    game_id: int | None = Field(foreign_key="games.id", primary_key=True, default=None)
-    pitcher_id: int | None = Field(
-        foreign_key="pitchers.id", primary_key=True, default=None
-    )
+    game_id: str = Field(foreign_key="games.id", primary_key=True)
+    pitcher_id: str = Field(foreign_key="pitchers.id", primary_key=True)
     outs: int
     ab: int
     batters_faced: int
@@ -58,8 +47,8 @@ class PitcherOuting(SQLModel, table=True):
     hit_batters: int
     ground_balls: int
     fly_balls: int
-    pitches: int
-    strikes: int
+    pitches: int | None
+    strikes: int | None
 
     game_score: float | None = None
 
@@ -71,7 +60,7 @@ class PitcherOuting(SQLModel, table=True):
         return (
             50
             + self.outs
-            + max(0, 2 * 12 - self.outs)
+            + max(0, 2 * (self.outs - 12) // 3)
             + self.strikeouts
             - 2 * self.hits
             - 4 * self.earned_runs
@@ -86,19 +75,36 @@ class PitcherOuting(SQLModel, table=True):
 class Game(SQLModel, table=True):
     __tablename__ = "games"
 
-    id: int = Field(primary_key=True)
+    id: str = Field(primary_key=True)
     date: date_type = Field(index=True)
-    venue_id: int | None = Field(foreign_key="venues.id", default=None)
-    runs: int
+    venue_id: str = Field(foreign_key="venues.id")
+    visitor: str
+    visitor_city: str
+    visitor_name: str
+    visitor_runs: int
+    home: str
+    home_name: str
+    home_city: str
+    home_runs: int
 
     venue: "Venue" = Relationship(back_populates="games")
     pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="game")
 
 
+class ExpectedGameScore(SQLModel, table=True):
+    __tablename__ = "expected_game_scores"
+
+    venue_id: str = Field(foreign_key="venues.id", primary_key=True)
+    date: date_type = Field(primary_key=True)
+    expected_game_score: float
+
+    venue: "Venue" = Relationship(back_populates="expected_game_scores")
+
+
 class Rating(SQLModel, table=True):
     __tablename__ = "ratings"
 
-    pitcher_id: int = Field(foreign_key="pitchers.id", primary_key=True, default=None)
+    pitcher_id: str = Field(foreign_key="pitchers.id", primary_key=True)
     date: date_type = Field(primary_key=True)
     rating: float
 
