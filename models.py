@@ -11,10 +11,6 @@ class Venue(SQLModel, table=True):
     name: str
 
     games: list["Game"] = Relationship(back_populates="venue")
-    expected_game_scores: list["ExpectedGameScore"] = Relationship(
-        back_populates="venue"
-    )
-
 
 class Pitcher(SQLModel, table=True):
     __tablename__ = "pitchers"
@@ -90,16 +86,6 @@ class Game(SQLModel, table=True):
 
     venue: "Venue" = Relationship(back_populates="games")
     pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="game")
-
-
-class ExpectedGameScore(SQLModel, table=True):
-    __tablename__ = "expected_game_scores"
-
-    venue_id: str = Field(foreign_key="venues.id", primary_key=True)
-    date: date_type = Field(primary_key=True)
-    expected_game_score: float
-
-    venue: "Venue" = Relationship(back_populates="expected_game_scores")
 
 
 class Rating(SQLModel, table=True):
