@@ -35,7 +35,26 @@ LIMIT 100;
 
 Ballparks endpoint from MLBAM has some retrosheet IDs, but not all.
 Need to look for a match.
+
 ```
-```
-```
+COPY (
+SELECT
+  po.game_id,
+  g.date,
+  g.venue_id,
+  g.runs_at_venue_last_100_games as rlast100,
+  po.pitcher_id,
+  po.game_score,
+  po.rating,
+  g.date - LAG(g.date) OVER (
+    PARTITION BY po.pitcher_id
+    ORDER BY g.date
+  ) -1 AS days_inactive,
+  50 + po.game_score - (68 - 2 * g.runs_at_venue_last_100_games / 100) as ags
+FROM pitcher_outings AS po
+JOIN games AS g
+  ON po.game_id = g.id
+WHERE po.pitcher_id = 'glast001'
+ORDER BY g.date
+) TO '/exports/glast001.csv' WITH CSV HEADER;
 ```

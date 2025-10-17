@@ -16,8 +16,8 @@ def process_pitcher_ratings(session: Session, pitcher: Pitcher) -> None:
     # MIL197008010 -> 197008010 this is a proxy for date order, last digit for doubleheaders
     for outing in sorted(pitcher.outings, key=lambda o: o.game_id[3:]):
         if prev_outing:
-            days_inactive = (outing.game.date - prev_outing.game.date).days
-            if days_inactive < 7:
+            days_inactive = (outing.game.date - prev_outing.game.date).days - 1
+            if days_inactive <= 6:
                 current_rating = prev_outing.rating
             elif days_inactive <= 200:
                 current_rating = prev_outing.rating - 0.25 * (days_inactive - 6)
@@ -33,8 +33,7 @@ def process_pitcher_ratings(session: Session, pitcher: Pitcher) -> None:
             adjusted_game_score = 50 + outing.game_score - e
         else:
             adjusted_game_score = outing.game_score
-        new_rating = current_rating * 0.97 + 0.30 * adjusted_game_score
-        outing.rating = max(new_rating, 300)
+        outing.rating = max(current_rating, 300) * 0.97 + 0.30 * adjusted_game_score
         session.add(outing)
 
         prev_outing = outing
@@ -42,6 +41,8 @@ def process_pitcher_ratings(session: Session, pitcher: Pitcher) -> None:
 
 if __name__ == "__main__":
     with Session(engine) as session:
-        for pitcher in session.exec(select(Pitcher)).all():
+        for pitcher in session.exec(
+            select(Pitcher).where(Pitcher.id == "glast001")
+        ).all():
             process_pitcher_ratings(session, pitcher)
             session.commit()
