@@ -83,7 +83,7 @@ class Game(SQLModel, table=True):
     home_name: str
     home_city: str
     home_runs: int
-    runs_at_venue_last_100_days: int | None = None
+    runs_at_venue_last_100_games: int | None = None
 
     venue: "Venue" = Relationship(back_populates="games")
     outings: list["PitcherOuting"] = Relationship(back_populates="game")

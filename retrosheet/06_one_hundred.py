@@ -27,14 +27,14 @@ with Session(engine) as session:
 
     # Only keep the sum if there are at least 100 prior rows
     conditional_sum = case((row_number >= 100, sum_last_100), else_=None).label(
-        "runs_at_venue_last_100_days"
+        "runs_at_venue_last_100_games"
     )
 
     subquery = select(Game.id.label("game_id"), conditional_sum).subquery()
 
     session.exec(
         update(Game)
-        .values(runs_at_venue_last_100_days=subquery.c.runs_at_venue_last_100_days)
+        .values(runs_at_venue_last_100_games=subquery.c.runs_at_venue_last_100_games)
         .where(Game.id == subquery.c.game_id)
     )
     session.commit()
