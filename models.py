@@ -19,7 +19,7 @@ class Pitcher(SQLModel, table=True):
     mlbam_id: int = Field(unique=True)
     name: str
 
-    pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="pitcher")
+    outings: list["PitcherOuting"] = Relationship(back_populates="pitcher")
     ratings: list["Rating"] = Relationship(back_populates="pitcher")
 
 
@@ -47,6 +47,7 @@ class PitcherOuting(SQLModel, table=True):
     strikes: int | None
 
     game_score: float | None = None
+    rating: float | None = None
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -64,8 +65,8 @@ class PitcherOuting(SQLModel, table=True):
             - self.walks
         )
 
-    game: "Game" = Relationship(back_populates="pitcher_outings")
-    pitcher: "Pitcher" = Relationship(back_populates="pitcher_outings")
+    game: "Game" = Relationship(back_populates="outings")
+    pitcher: "Pitcher" = Relationship(back_populates="outings")
 
 
 class Game(SQLModel, table=True):
@@ -85,7 +86,7 @@ class Game(SQLModel, table=True):
     runs_at_venue_last_100_days: int | None = None
 
     venue: "Venue" = Relationship(back_populates="games")
-    pitcher_outings: list["PitcherOuting"] = Relationship(back_populates="game")
+    outings: list["PitcherOuting"] = Relationship(back_populates="game")
 
 
 class Rating(SQLModel, table=True):
