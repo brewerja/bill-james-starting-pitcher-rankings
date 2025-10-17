@@ -34,7 +34,7 @@ def process_pitcher_ratings(session: Session, pitcher: Pitcher) -> None:
         else:
             adjusted_game_score = outing.game_score
         new_rating = current_rating * 0.97 + 0.30 * adjusted_game_score
-        outing.rating = new_rating
+        outing.rating = max(new_rating, 300)
         session.add(outing)
 
         prev_outing = outing
