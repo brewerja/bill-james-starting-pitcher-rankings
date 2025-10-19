@@ -1,13 +1,13 @@
 from sqlmodel import (
+    Integer,
     Session,
     SQLModel,
-    create_engine,
-    select,
-    func,
-    cast,
-    Integer,
-    update,
     case,
+    cast,
+    create_engine,
+    func,
+    select,
+    update,
 )
 
 from models import Game
